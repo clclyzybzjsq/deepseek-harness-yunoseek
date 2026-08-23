@@ -6,7 +6,7 @@ Yunoseek pink skin for the [DeepSeek Harness](https://github.com/deepseek-ai/dee
 - **Art direction sheet** — the pink Hero glow recolor per palette, and the **assistant avatar** painted into every chat assistant row via its stable `data-chat-flow-kind` attribute (the host's CSS Modules class names are hashed and not addressable cross-package).
 - **Brand marks** (non-`official` builds only) — the yunoseek logo in the sidebar brand row, the gradient "Yunoseek" wordmark, and the welcome artwork in the conversation Hero seat. Official DeepSeek Harness compositions already own those single-occupant slots with the built-in brand, so the skin yields them by default (see "Build profile" below).
 
-In short: pink everywhere, yunoseek artwork, no host component modified, no yunoseek business features (player, minigames, mode pills, modals).
+no host component modified
 
 ## Install
 
