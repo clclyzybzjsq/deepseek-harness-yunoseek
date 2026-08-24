@@ -5,8 +5,33 @@
 - **粉色 Token 层** — 一个 theme `overrideTokens` 覆盖层，作用于 `--dsw-*` 语义 token 与 `--dsw-static-deepseek-*` 静态标尺；每个 token 都带 yunoseek 两套明暗取值。皮肤常驻且跟随用户的明暗/跟随系统偏好，无需任何设置。
 - **美术风格表** — 按明暗配色分别重着色的粉色 Hero 光晕，以及通过聊天行稳定属性 `data-chat-flow-kind` 注入的**助手头像**（宿主行的 CSS Modules 类名经过哈希、跨包不可寻址）。
 - **品牌标记**（仅非 `official` 构建）— 侧栏品牌行的 yunoseek logo、渐变 "Yunoseek" 字标、对话 Hero 位的欢迎大图。官方 DeepSeek Harness 组合已用内置品牌占住这些单占位插槽，皮肤默认让位（见下文"构建 profile 与品牌插槽"）。
+- **Yunoseek 身份提示词** — 节点半部把 yunoseek 系统提示词（`assets/system-prompt.js`）注册为第一条系统提示词 section，使每次组装的系统提示词都以 Yunoseek 人设开头。
 
-一句话：全局粉色 + yunoseek 图片，不动任何宿主组件，不含 yunoseek 业务功能（播放器、小游戏、模式胶囊、弹窗等）。
+一句话：全局粉色 + yunoseek 图片 + Yunoseek 人设，不动任何宿主组件，不含 yunoseek 业务功能（播放器、小游戏、模式胶囊、弹窗等）。
+
+## Yunoseek 身份提示词
+
+除了视觉之外，插件还会把 yunoseek 身份提示词注入给模型。其节点半部在 `systemPrompt` 注册表注册名为 `yunoseek:identity` 的 section，order 为 `-200`，渲染在**最前**——位于 harness 身份（`-100`）与部署人设（`0`）之前，即模型每轮读到的第一段文本。默认文本来自 yunoseek 的 `assets/system-prompt.js`，构建时内嵌进包内。
+
+注入默认开启，且对 profile 内所有 agent 全局生效（section 位于提示词注册表的全局层）。要关闭或替换文本，请在你自己 profile 的补丁（`$DSH_HOME/profiles/web/cordis.patch.yml`）中覆盖该行——它是更后一层，会整体替换该行的 `config` 值：
+
+```yaml
+- update:
+    - id: yunoseek-skin
+      config:
+        enabled: false        # 只留皮肤，不注入提示词
+```
+
+```yaml
+- update:
+    - id: yunoseek-skin
+      config:
+        prompt: |
+          # My own identity
+          ...                   # 自定义提示词文本
+```
+
+配置在启动时读取，改后需重启 `dsh web`。section 文本是静态的：不含 `{{variable}}` 引用——自定义提示词若含 `{{…}}` 会令提示词组装失败（fail loud，杜绝带病提示词进入模型请求）。
 
 ## 安装
 
@@ -33,7 +58,7 @@ allowBuilds:
 
 ```sh
 dsh plugin --profile web add dsh-yunoseek-skin        # npm（lib/ 已随发布构建）
-dsh plugin --profile web add ./dsh-yunoseek-skin-0.1.0.tgz   # pnpm pack
+dsh plugin --profile web add ./dsh-yunoseek-skin-0.2.0.tgz   # pnpm pack
 ```
 
 ### 卸载
@@ -72,6 +97,8 @@ pnpm install    # 安装 tsdown 并运行 prepare，产出 lib/
 
 ## 已知限制
 
+- 身份提示词是全局且最前的：若更后一层注册了 `complete: true` 的系统提示词 section，该 agent 的整条提示词会被替换，注入的文本在那里消失（注册表文档化的 complete-section 行为）。
+- 自定义提示词不能含 `{{…}}`——提示词变量按严格规则插值，未知引用会令组装失败。
 - 助手头像按选择器画进聊天行：`[data-chat-flow-kind="assistant-step"]::before`，固定 34px 几何。若 ui-conversation 改变该属性或行几何，需要复查 `src/client/styles.ts` 里的规则。
 - 侧栏 / Hero 标记在 `official` 构建下按设计跳过（单占位品牌插槽）；开启方法见上文。
 - Hero 光晕规则针对 `[data-phase="hero"] svg ellipse`；未来的 Hero 改版可能不再用 SVG 椭圆承载光晕。

@@ -1,7 +1,7 @@
 {
   "name": "dsh-yunoseek-skin",
-  "version": "0.1.0",
-  "description": "Yunoseek pink skin for the DeepSeek Harness web GUI: a pink --dsw-* token layer (light and dark palettes), yunoseek brand artwork, and the assistant avatar.",
+  "version": "0.2.0",
+  "description": "Yunoseek pink skin for the DeepSeek Harness web GUI (pink --dsw-* token layer, yunoseek brand artwork, assistant avatar) plus the Yunoseek system-prompt injection: the identity prompt rendered as the first system-prompt section.",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",

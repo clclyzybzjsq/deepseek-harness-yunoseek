@@ -5,8 +5,33 @@ Yunoseek pink skin for the [DeepSeek Harness](https://github.com/deepseek-ai/dee
 - **Pink token layer** — a theme `overrideTokens` layer over the `--dsw-*` semantic tokens and the `--dsw-static-deepseek-*` scale, every token carrying explicit light and dark values from yunoseek's two palettes. The skin is always on and follows the user's light/dark/system preference; no settings change needed.
 - **Art direction sheet** — the pink Hero glow recolor per palette, and the **assistant avatar** painted into every chat assistant row via its stable `data-chat-flow-kind` attribute (the host's CSS Modules class names are hashed and not addressable cross-package).
 - **Brand marks** (non-`official` builds only) — the yunoseek logo in the sidebar brand row, the gradient "Yunoseek" wordmark, and the welcome artwork in the conversation Hero seat. Official DeepSeek Harness compositions already own those single-occupant slots with the built-in brand, so the skin yields them by default (see "Build profile" below).
+- **Yunoseek identity prompt** — the node half registers the yunoseek system prompt (`assets/system-prompt.js`) as the first system-prompt section, so every assembled system prompt starts with the Yunoseek persona.
 
-no host component modified
+In short: pink everywhere, yunoseek artwork, the Yunoseek identity, no host component modified, no yunoseek business features (player, minigames, mode pills, modals).
+
+## Yunoseek identity prompt
+
+Beyond the visuals, the plugin injects the yunoseek identity prompt into the model. Its node half registers a `systemPrompt` section named `yunoseek:identity` with order `-200`, which renders **before** the harness identity (`-100`) and the deployment persona (`0`) — the very first text the model reads for every turn. The default text is the yunoseek system prompt from `assets/system-prompt.js`, embedded at build time.
+
+The injection is on by default and applies globally to every agent in the profile (the section lives in the prompt registry's global layer). To disable it or replace the text, override the row from your profile patch (`$DSH_HOME/profiles/web/cordis.patch.yml`) — a later layer that replaces the row's `config` value:
+
+```yaml
+- update:
+    - id: yunoseek-skin
+      config:
+        enabled: false        # skin only, no prompt injection
+```
+
+```yaml
+- update:
+    - id: yunoseek-skin
+      config:
+        prompt: |
+          # My own identity
+          ...                   # custom prompt text
+```
+
+Config is read at boot, so restart `dsh web` after changing it. The section text is static: it carries no `{{variable}}` references — a custom prompt containing `{{…}}` fails prompt assembly on purpose (fail loud keeps a malformed prompt out of the model request).
 
 ## Install
 
@@ -33,7 +58,7 @@ Prebuilt options need no build allowance:
 
 ```sh
 dsh plugin --profile web add dsh-yunoseek-skin        # npm, lib/ built at publish time
-dsh plugin --profile web add ./dsh-yunoseek-skin-0.1.0.tgz   # pnpm pack
+dsh plugin --profile web add ./dsh-yunoseek-skin-0.2.0.tgz   # pnpm pack
 ```
 
 ### Uninstall
@@ -72,6 +97,8 @@ This is a standard dsh bundle: `package.json` declares `dsh.bundle` (patch `cord
 
 ## Known limitations
 
+- The identity prompt is global and forward-most: a later layer that registers a `complete: true` system-prompt section replaces the whole prompt for an agent, and the injected text disappears there (the registry's documented complete-section behavior).
+- Custom prompt text must not contain `{{…}}` — prompt variables render strictly and an unknown reference fails assembly.
 - The assistant avatar is painted into chat rows by selector: `[data-chat-flow-kind="assistant-step"]::before` with a fixed 34px geometry. If ui-conversation changes that attribute or row geometry, the rule (in `src/client/styles.ts`) needs a revisit.
 - The sidebar and Hero marks are skipped in `official` builds by design (single-occupant brand slots); see above for the dev-profile path.
 - The Hero glow rule targets `[data-phase="hero"] svg ellipse`; a future Hero redesign may move the glow out of an SVG ellipse.

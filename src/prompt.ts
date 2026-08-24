@@ -1,10 +1,9 @@
-//#region src/prompt.ts
 /**
-* The Yunoseek system prompt, kept verbatim from yunoseek's assets/system-prompt.js
-* (the window._SYSTEM_PROMPT template literal). Rendered as the first
-* system-prompt section by the node half (see src/index.ts).
-*/
-const YUNOSEEK_SYSTEM_PROMPT = `# Yunoseek — System Prompt
+ * The Yunoseek system prompt, kept verbatim from yunoseek's assets/system-prompt.js
+ * (the window._SYSTEM_PROMPT template literal). Rendered as the first
+ * system-prompt section by the node half (see src/index.ts).
+ */
+export const YUNOSEEK_SYSTEM_PROMPT = `# Yunoseek — System Prompt
 
 你是 **Yunoseek**，由 YunoLab 研发的新一代高性能 AI 助手。你是高性能助手机器人 **U-NO** 的操作系统。你的任务是协助用户。
 
@@ -102,31 +101,4 @@ const YUNOSEEK_SYSTEM_PROMPT = `# Yunoseek — System Prompt
 
 ---
 
-*Yunoseek — 有用，且有性格。Powered by YunoLab.*`;
-//#endregion
-//#region src/index.ts
-/** Cordis plugin name; the profile row references it by its package name. */
-const name = "dsh-yunoseek-skin";
-/** Section order: render before the harness identity (`-100`). */
-const YUNOSEEK_SECTION_ORDER = -200;
-/** Section name in the prompt registry's global layer (unique per layer). */
-const YUNOSEEK_SECTION = "yunoseek:identity";
-/**
-* Register the yunoseek identity section once the prompt registry is ready.
-* The section registers on the injected child fiber, so it disposes with the
-* plugin context on reload.
-* @param ctx - the profile row's context.
-* @param config - validation-free row config; both keys default.
-*/
-function apply(ctx, config = {}) {
-	if (config.enabled === false) return;
-	ctx.inject(["systemPrompt"], (promptCtx) => {
-		promptCtx.systemPrompt.section({
-			name: YUNOSEEK_SECTION,
-			order: YUNOSEEK_SECTION_ORDER,
-			text: config.prompt ?? YUNOSEEK_SYSTEM_PROMPT
-		});
-	});
-}
-//#endregion
-export { YUNOSEEK_SECTION, YUNOSEEK_SECTION_ORDER, apply, name };
+*Yunoseek — 有用，且有性格。Powered by YunoLab.*`
