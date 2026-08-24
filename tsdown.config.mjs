@@ -25,6 +25,9 @@
  */
 const BUILD_PROFILE = process.env.DSH_CLIENT_BUILD_PROFILE ?? 'official'
 
+/** Plugin id the client bundle must register under (the loader's entry id). */
+const PLUGIN_ID = 'dsh-yunoseek-skin'
+
 /** Specifiers the web host provides through its module table (shell-seeded React). */
 const hostProvided = (specifier) =>
   specifier === 'react' || specifier === 'react/jsx-runtime' || specifier === 'react/jsx-dev-runtime'
@@ -63,6 +66,16 @@ export default [
     },
     outputOptions: {
       entryFileNames: 'client.js',
+      // Client-modules bundle contract (mirrors packages/client/tsdown.client.ts):
+      // executing the script must only REGISTER the factory via
+      // window.__ModuleLoader__.load({ id, factory }); the module body — with
+      // every require() against the injected module-table require — runs later,
+      // at factory materialization. Without this wrapper the top-level body
+      // would execute at script load (a bare require() the browser cannot
+      // answer) and the loader rejects the bundle as unregistered.
+      banner: `window.__ModuleLoader__.load({ id: ${JSON.stringify(PLUGIN_ID)}, factory: (require) => {`,
+      footer: 'return module.exports; } });',
+      intro: 'var module = { exports: {} }; var exports = module.exports;',
     },
   },
 ]
