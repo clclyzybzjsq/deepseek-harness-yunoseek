@@ -32,6 +32,7 @@ The injection is on by default and applies globally to every agent in the profil
 ```
 
 Config is read at boot, so restart `dsh web` after changing it. The section text is static: it carries no `{{variable}}` references — a custom prompt containing `{{…}}` fails prompt assembly on purpose (fail loud keeps a malformed prompt out of the model request).
+**modified prompt takes about 1200 extra tokens**
 
 ## Install
 
