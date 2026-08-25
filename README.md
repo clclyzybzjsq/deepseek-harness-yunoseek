@@ -7,7 +7,7 @@ Yunoseek pink skin for the [DeepSeek Harness](https://github.com/deepseek-ai/dee
 - **Brand marks** (non-`official` builds only) — the yunoseek logo in the sidebar brand row, the gradient "Yunoseek" wordmark, and the welcome artwork in the conversation Hero seat. Official DeepSeek Harness compositions already own those single-occupant slots with the built-in brand, so the skin yields them by default (see "Build profile" below).
 - **Yunoseek identity prompt** — the node half registers the yunoseek system prompt (`assets/system-prompt.js`) as the first system-prompt section, so every assembled system prompt starts with the Yunoseek persona.
 
-In short: pink everywhere, yunoseek artwork, the Yunoseek identity, no host component modified, no yunoseek business features (player, minigames, mode pills, modals).
+extra system prompt takes ~1200 tokens and can be banned/started though the method written in release 0.2.0
 
 ## Yunoseek identity prompt
 
