@@ -1,7 +1,7 @@
 {
   "name": "dsh-yunoseek-skin",
-  "version": "0.2.0",
-  "description": "Yunoseek pink skin for the DeepSeek Harness web GUI (pink --dsw-* token layer, yunoseek brand artwork, assistant avatar) plus the Yunoseek system-prompt injection: the identity prompt rendered as the first system-prompt section.",
+  "version": "0.3.0",
+  "description": "Yunoseek pink skin for the DeepSeek Harness web GUI (pink --dsw-* token layer, yunoseek brand artwork, assistant avatar) plus the Yunoseek system-prompt injection: the identity prompt rendered as the first system-prompt section. v0.3.0 targets dsh v0.1.2-alpha.1 (client-runtime split removed; inject declarations updated).",
   "license": "MIT",
   "type": "module",
   "main": "lib/index.js",
@@ -29,8 +29,8 @@
     "client": {
       "platform": "web",
       "inject": [
-        "@deepseek-ai/dsh-client-runtime",
         "@deepseek-ai/dsh-client-ui-conversation",
+        "@deepseek-ai/dsh-client-ui-renderer",
         "@deepseek-ai/dsh-client-ui-sidebar",
         "@deepseek-ai/dsh-client-ui-theme"
       ]

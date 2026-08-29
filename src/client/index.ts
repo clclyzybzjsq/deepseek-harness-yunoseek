@@ -9,15 +9,22 @@
  * already contain ui-brand-official, which owns the same single-occupant
  * slots; the tsdown config pins the build profile (see tsdown.config.mjs —
  * default "official", set DSH_CLIENT_BUILD_PROFILE=dev to enable the marks).
+ *
+ * v0.3.0 (dsh v0.1.2-alpha.1): the client-runtime package is gone; `slots`
+ * comes from the ui-renderer Context merge, so the renderer/ui-slots type
+ * imports below are required for `ctx.slots` to type-check.
  */
-import type { ClientContext } from '@deepseek-ai/dsh-client-runtime/client'
-// Type-only: pulls the ui-theme Context merge (`ctx.theme`) and the
-// sidebar/conversation SlotMap merges behind the brand slot declarations.
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
+// Type-only: pulls the ui-theme Context merge (`ctx.theme`), the ui-renderer
+// `slots` merge, and the sidebar/conversation SlotMap merges behind the brand
+// slot declarations.
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
+import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 import type {} from '@deepseek-ai/dsh-client-ui-sidebar/client'
 import type {} from '@deepseek-ai/dsh-client-ui-theme/client'
 import { THEME_LAYER_SOURCE, YUNOSEEK_THEME_LAYER } from './theme.ts'
 import { installYunoseekStyles } from './styles.ts'
+import { installStatusLabelOverride } from './statusLabel.ts'
 import { YunoseekHeroMark, YunoseekSidebarMark, YunoseekSidebarName } from './Brand.tsx'
 
 /** Required services: the UI slot registry and the theme runtime. */
@@ -33,6 +40,10 @@ export function apply(ctx: ClientContext): void {
   ctx.effect(
     () => ctx.theme.overrideTokens(THEME_LAYER_SOURCE, YUNOSEEK_THEME_LAYER),
     'dsh-yunoseek-skin: pink token layer',
+  )
+  ctx.effect(
+    () => installStatusLabelOverride(),
+    'dsh-yunoseek-skin: status label override',
   )
   if (process.env.DSH_CLIENT_BUILD_PROFILE === 'official') return
   ctx.slots.inject('sidebar.brand.mark', () =>
